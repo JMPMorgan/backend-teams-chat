@@ -14,16 +14,19 @@ const ConversationSchema = Schema({
   user: {
     type: Schema.Types.ObjectId,
     ref: "User",
-    required: true,
   },
-  artist: {
+  receiver: {
     type: Schema.Types.ObjectId,
     ref: "User",
-    required: true,
+  },
+  group: {
+    type: Schema.Types.ObjectId,
+    ref: "Group",
   },
   last_message: {
     type: Date,
     required: false,
+    default: Date.now(),
   },
 });
 

@@ -34,6 +34,42 @@ const getUsers = async (req, res) => {
     });
   }
 };
+
+const getUserFinder = async (req, res) => {
+  try {
+    const { data } = req.params;
+    const users = await User.find({
+      $or: [
+        {
+          name: {
+            $regex: data,
+            $options: "i",
+          },
+          _id: {
+            $ne: req.id,
+          },
+        },
+        {
+          username: {
+            $regex: data,
+            $options: "i",
+          },
+          _id: {
+            $ne: req.id,
+          },
+        },
+      ],
+    }).limit(5);
+    return res.json({
+      users,
+    });
+  } catch (error) {
+    console.log(error);
+    return res.status(500).json({
+      msg: "Server Error",
+    });
+  }
+};
 const postUser = async (req, res) => {
   try {
     const { name, email, password, lastname, username, cpassword } = req.body;
@@ -110,6 +146,7 @@ const deleteUser = async (req, res) => {
 module.exports = {
   getUser,
   getUsers,
+  getUserFinder,
   updateUser,
   postUser,
   deleteUser,

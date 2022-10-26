@@ -1,8 +1,26 @@
 const Group = require("../models/group");
 const GroupUser = require("../models/group-user");
+const Message = require("../models/message");
 
 const getGroup = async (req, res) => {
   try {
+    const userid = req.id;
+    const { loadMessages } = req.query;
+    const { id } = req.params;
+    if (loadMessages === "true") {
+      const messages = await Message.find({ group: id }).populate(
+        "conversation"
+      );
+      const group = await Group.findById(id);
+      return res.json({
+        messages,
+        group,
+      });
+    }
+    const group = await Group.findById(id);
+    return res.json({
+      group,
+    });
     //const group= await
   } catch (error) {
     console.log(error);
@@ -14,7 +32,6 @@ const getGroup = async (req, res) => {
 
 const postGroup = async (req, res) => {
   try {
-    console.log("Hola");
     const { name } = req.body;
     const exitsGroup = await Group.findOne({ name });
     if (exitsGroup) {
@@ -76,10 +93,27 @@ const getGroups = async (req, res) => {
   }
 };
 
+const addUserToGroup = async (req, res) => {
+  try {
+    const { iduser, idgroup } = req.body;
+    const groupuser = new GroupUser({ user: iduser, group: idgroup });
+    await groupuser.save();
+    return res.json({
+      msg: "User added to conversation",
+    });
+  } catch (error) {
+    console.log(error);
+    return res.status(500).json({
+      msg: "Server Error",
+    });
+  }
+};
+
 module.exports = {
+  addUserToGroup,
+  deleteGroup,
   getGroup,
   getGroups,
   postGroup,
-  deleteGroup,
   updateGroup,
 };

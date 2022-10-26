@@ -6,6 +6,7 @@ const {
   postUser,
   updateUser,
   deleteUser,
+  getUserFinder,
 } = require("../controllers/user");
 const {
   exitsUserPerID,
@@ -18,6 +19,7 @@ const { validateJWT } = require("../middlewares/validateJWT");
 const router = new Router();
 
 router.get("/", getUsers);
+router.get("/search/:data", [validateJWT, inputValidation], getUserFinder);
 router.get("/token", [validateJWT, inputValidation], getUser);
 router.post(
   "/",

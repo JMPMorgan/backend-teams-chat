@@ -14,12 +14,14 @@ const MessageSchema = Schema({
   sender: {
     type: Schema.Types.ObjectId,
     ref: "User",
-    required: true,
   },
   receiver: {
     type: Schema.Types.ObjectId,
     ref: "User",
-    required: true,
+  },
+  group: {
+    type: Schema.Types.ObjectId,
+    ref: "Group",
   },
   conversation: {
     type: Schema.Types.ObjectId,
