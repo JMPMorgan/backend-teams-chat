@@ -7,14 +7,16 @@ const {
   postGroup,
   updateGroup,
 } = require("../controllers/group");
+const { inputValidation } = require("../middlewares/validateinput");
+const { validateJWT } = require("../middlewares/validateJWT");
 
 const router = new Router();
 
-router.get("/", getGroups);
+router.get("/", [validateJWT, inputValidation], getGroups);
 
 router.get("/:id", getGroup);
 
-router.post("/", postGroup);
+router.post("/", [validateJWT, inputValidation], postGroup);
 
 router.delete("/:id", deleteGroup);
 

@@ -9,6 +9,7 @@ const validateJWT = async (req, res, next) => {
   }
   try {
     const { uid } = jwt.verify(token, process.env.SPK);
+    console.log(uid);
     req.id = uid;
     const userAuth = await User.findById(uid);
     if (!userAuth.status) {
