@@ -1,12 +1,10 @@
 const Message = require("../models/message");
 const Conversation = require("../models/conversation");
 const User = require("../models/user");
-const conversation = require("../models/conversation");
 
 const sendMessage = async (req, res) => {
   try {
     const { sendToUser } = req.body;
-
     if (sendToUser) {
       const userid = req.id;
       const { userreceiver, message, idconversation } = req.body;
@@ -123,7 +121,10 @@ const getMessagesPerUser = async (req, res) => {
     .sort({ creation_date: -1 });
   const conversations = conversation.map((info) => {
     const { user, receiver, _id } = info;
-    return { user, receiver, _id };
+    if (user._id.toString() === iduser) {
+      return { user, receiver, _id, idreceiver: receiver._id };
+    }
+    return { user, receiver, _id, idreceiver: user._id };
   });
   for (let index = 0; index < conversations.length; index++) {
     const message = await Message.findOne({
