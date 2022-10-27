@@ -138,14 +138,25 @@ const getMessagesPerUser = async (req, res) => {
   });
 };
 
-const setMessages = (conversations) => {
-  new Promise((resolve, reject) => {
-    console.log("Hola", conversations);
-  });
+const getConversationPerUser = async (req, res) => {
+  try {
+    const { idconversation } = req.params;
+    const messages = await Message.find({ conversation: idconversation }).limit(
+      30
+    );
+    return res.json({
+      messages,
+    });
+  } catch (error) {
+    console.log(error);
+    return res.status(500).json({
+      msg: "Server Error",
+    });
+  }
 };
-
 module.exports = {
   sendMessage,
   newConversation,
   getMessagesPerUser,
+  getConversationPerUser,
 };
