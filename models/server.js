@@ -9,7 +9,9 @@ class Server {
     this.app = express();
     this.port = process.env.PORT;
     this.server = createServer(this.app);
-    this.io - require("socket.io")(this.server);
+    this.io = require("socket.io")(this.server, {
+      cors: "*",
+    });
     this.USER_PATH = "/api/user";
     this.AUTH_PATH = "/api/auth";
     this.GROUP_PATH = "/api/group";
@@ -38,11 +40,14 @@ class Server {
   }
 
   sockets() {
-    this.io.on("connection", (socket) => socketController(socket, this.io));
+    this.io.on("connection", (socket) => {
+      socketController(socket, this.io);
+    });
+    //);
   }
 
   startServer() {
-    this.app.listen(this.port, () => {
+    this.server.listen(this.port, () => {
       console.log(`Server Running in PORT:${this.port}`);
     });
   }

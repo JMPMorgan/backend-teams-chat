@@ -1,15 +1,14 @@
 const jwt = require("jsonwebtoken");
 const User = require("../models/user");
 const validateJWT = async (req, res, next) => {
-  const token = req.header("token");
-  if (!token) {
-    return res.status(401).json({
-      msg: "Token dont exits",
-    });
-  }
   try {
+    const token = req.header("token");
+    if (!token) {
+      return res.status(401).json({
+        msg: "Token dont exits",
+      });
+    }
     const { uid } = jwt.verify(token, process.env.SPK);
-    console.log(uid);
     req.id = uid;
     const userAuth = await User.findById(uid);
     if (!userAuth.status) {
