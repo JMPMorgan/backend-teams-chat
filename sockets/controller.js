@@ -33,9 +33,12 @@ const socketController = async (socket, io) => {
   });
 
   socket.on("mensaje-privado", ({ message, userreceiver: receiver }) => {
-    socket
-      .to(receiver)
-      .emit("mensaje-privado-chat", { from: token.name, message });
+    console.log(token);
+    socket.to(receiver).emit("mensaje-privado-chat", {
+      from: token.username,
+      message,
+      _id: token._id,
+    });
   });
 
   /*

@@ -26,10 +26,12 @@ const sendMessage = async (req, res) => {
         message: message,
         conversation: conversation._id,
       });
+      //msg.;
       await msg.save();
-
+      await msg.populate("sender");
       return res.json({
         msg: "Message Save",
+        message: msg,
       });
     }
     console.log("Aqui esta arreabatao", req.body);
@@ -141,9 +143,17 @@ const getMessagesPerUser = async (req, res) => {
 const getConversationPerUser = async (req, res) => {
   try {
     const { idconversation } = req.params;
-    const messages = await Message.find({ conversation: idconversation }).limit(
-      30
-    );
+    const data = await Message.find({ conversation: idconversation })
+      .limit(30)
+      .populate("sender");
+    console.log(data);
+    const messages = data.map((message) => {
+      return {
+        _id: message._id,
+        from: message.sender.username,
+        message: message.message,
+      };
+    });
     return res.json({
       messages,
     });
