@@ -5,8 +5,8 @@ const User = require("../models/user");
 const sendMessage = async (req, res) => {
   try {
     const { sendToUser } = req.body;
+    const userid = req.id;
     if (sendToUser) {
-      const userid = req.id;
       const { userreceiver, message, idconversation } = req.body;
       let conversation;
       if (!idconversation) {
@@ -34,17 +34,13 @@ const sendMessage = async (req, res) => {
         message: msg,
       });
     }
-    console.log("Aqui esta arreabatao", req.body);
-    console.log(sendToUser);
     const { idgroup, message, idconversation } = req.body;
     let conversation;
     if (!idconversation) {
-      console.log("Hola");
       conversation = new Conversation({
         group: idgroup,
       });
       await conversation.save();
-      console.log(conversation);
     } else {
       conversation = await Conversation.findById(idconversation);
       conversation.last_message = Date.now();
@@ -54,10 +50,14 @@ const sendMessage = async (req, res) => {
       group: idgroup,
       message: message,
       conversation: conversation._id,
+      sender: userid,
     });
+    const user = await User.findById(userid);
     await msg.save();
     return res.json({
       msg: "Message Save",
+      message: msg,
+      from: user.username,
     });
   } catch (error) {
     console.log(error);

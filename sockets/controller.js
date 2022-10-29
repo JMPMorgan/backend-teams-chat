@@ -15,8 +15,9 @@ const socketController = async (socket, io) => {
   socket.join(token.id);
 
   if (idgrupo) {
-    socket.join(idgrupo);
+    console.log("Hola", idgrupo);
     chatMessage.addChatGroup(token._id, idgrupo);
+    socket.join(idgrupo);
   }
 
   socket.on("entrar-chat-grupo", (grupo) => {
@@ -24,8 +25,8 @@ const socketController = async (socket, io) => {
     io.to(grupo).emit("chat-grupo-usuarios", grupos);
   });
 
-  socket.on("desconectar-chat-sala", async ({ group, user }) => {
-    await chatMessage.disconnectUserInGroup(user.uid, group);
+  socket.on("desconectar-chat-sala", async ({ group }) => {
+    await chatMessage.disconnectUserInGroup(token.id, group);
   });
   socket.on("disconnect", () => {
     chatMessage.disconnectUser(token.id);
@@ -33,7 +34,6 @@ const socketController = async (socket, io) => {
   });
 
   socket.on("mensaje-privado", ({ message, userreceiver: receiver }) => {
-    console.log(token);
     socket.to(receiver).emit("mensaje-privado-chat", {
       from: token.username,
       message,
@@ -49,8 +49,13 @@ const socketController = async (socket, io) => {
       .emit("mensaje-privado-chat", { de: token.name, message });
   });
   */
-  socket.on("mensaje-grupo", ({ message, group }) => {
-    socket.to(group).emit("mensaje-grupo", { from: token.name, message });
+  socket.on("mensaje-grupo", ({ message, idgroup }) => {
+    console.log(message, idgroup);
+    socket.to(idgroup).emit("mensaje-grupo-recibido", {
+      from: token.username,
+      message,
+      _id: token._id,
+    });
   });
 };
 

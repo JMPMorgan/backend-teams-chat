@@ -39,7 +39,7 @@ class ChatMessage {
       this.groups[group] = [];
     }
     if (!this.groups[group].includes(id)) {
-      this.groupsp[group].push(id);
+      this.groups[group].push(id);
     }
   }
   getUsersInGroup(group) {
