@@ -13,7 +13,7 @@ const getGroup = async (req, res) => {
         .populate("sender");
       const group = await Group.findById(id);
       const messages = data.map((info) => {
-        const { _id, message, group } = info;
+        const { _id, message, group, situation } = info;
         let from = "";
         if (info.sender !== undefined) {
           from = info.sender.username;
@@ -23,6 +23,7 @@ const getGroup = async (req, res) => {
           message,
           group,
           from,
+          situation,
         };
       });
       return res.json({

@@ -7,7 +7,8 @@ const sendMessage = async (req, res) => {
     const { sendToUser } = req.body;
     const userid = req.id;
     if (sendToUser) {
-      const { userreceiver, message, idconversation } = req.body;
+      const { userreceiver, message, idconversation, situation } = req.body;
+      console.log("DATAAAAAAAAAAAA", message, situation);
       let conversation;
       if (!idconversation) {
         conversation = new Conversation({
@@ -25,6 +26,7 @@ const sendMessage = async (req, res) => {
         receiver: userreceiver,
         message: message,
         conversation: conversation._id,
+        situation: situation,
       });
       //msg.;
       await msg.save();
@@ -34,7 +36,7 @@ const sendMessage = async (req, res) => {
         message: msg,
       });
     }
-    const { idgroup, message, idconversation } = req.body;
+    const { idgroup, message, idconversation, situation } = req.body;
     let conversation;
     if (!idconversation) {
       conversation = new Conversation({
@@ -51,6 +53,7 @@ const sendMessage = async (req, res) => {
       message: message,
       conversation: conversation._id,
       sender: userid,
+      situation,
     });
     const user = await User.findById(userid);
     await msg.save();
@@ -131,7 +134,6 @@ const getMessagesPerUser = async (req, res) => {
   for (let index = 0; index < conversations.length; index++) {
     const message = await Message.findOne({
       conversation: conversations[index]._id,
-      situation: 0,
     }).sort({ creation_date: -1 });
     conversations[index].message = message;
   }
@@ -144,7 +146,7 @@ const getConversationPerUser = async (req, res) => {
   try {
     const { idconversation } = req.params;
     const data = await Message.find({ conversation: idconversation })
-      .limit(30)
+      .limit(50)
       .populate("sender");
     console.log(data);
     const messages = data.map((message) => {
@@ -152,6 +154,7 @@ const getConversationPerUser = async (req, res) => {
         _id: message._id,
         from: message.sender.username,
         message: message.message,
+        situation: message.situation,
       };
     });
     return res.json({
