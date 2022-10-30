@@ -15,7 +15,6 @@ const socketController = async (socket, io) => {
   socket.join(token.id);
 
   if (idgrupo) {
-    console.log("Hola", idgrupo);
     chatMessage.addChatGroup(token._id, idgrupo);
     socket.join(idgrupo);
   }
@@ -27,6 +26,9 @@ const socketController = async (socket, io) => {
 
   socket.on("desconectar-chat-sala", async ({ group }) => {
     await chatMessage.disconnectUserInGroup(token.id, group);
+  });
+  socket.on("desconectar-chat", () => {
+    return socket.disconnect();
   });
   socket.on("disconnect", () => {
     chatMessage.disconnectUser(token.id);
